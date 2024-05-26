@@ -5,12 +5,12 @@ import Button from '@mui/material/Button';
 
 class SpendingList extends React.Component {
 
+
     render() {
 
-        if (typeof document !== 'undefined') {
-            // document を使用したコード
-            return (<></>);
-          }
+        const handleClick = () => {
+            alert('Button clicked!');
+          };
 
         const headers = [
             {
@@ -39,7 +39,7 @@ class SpendingList extends React.Component {
         return (
             <div>
                 <p>支出詳細</p>
-                <Button variant="contained" color="primary" component={Link} to="/SignIn" >
+                <Button variant="contained" color="primary" onClick={handleClick} >
                     支出情報追加
                 </Button>
             </div>

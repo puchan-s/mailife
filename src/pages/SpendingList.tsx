@@ -1,11 +1,23 @@
+"use client";
+
 import React from 'react';
 import StickyHeadTable from '../components/StickyHeadTable'
 import Button from '@mui/material/Button';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 class SpendingList extends React.Component {
 
+    // ページ遷移を行う関数
+    navigateToURL() {
+        window.location.href = 'https://mui.com/material-ui/material-icons/?query=More';
+    }
+
     render() {
+     
+        const handleClick = () => {
+            alert('Button clicked!');
+            console.log('Button was clicked');
+          };
+
         const headers = [
             {
                 name: "フォーム名"
@@ -13,7 +25,7 @@ class SpendingList extends React.Component {
             {
                 name: "備考"
             },
-            {
+            {   
                 name: "作成日"
             },
             {
@@ -33,10 +45,15 @@ class SpendingList extends React.Component {
         return (
             <div>
                 <p>支出一覧</p>
-                <Button variant="contained" color="primary" >
+                <Button variant="contained" color="primary" onClick={this.navigateToURL}>
                     支出情報追加
                 </Button>
-                <StickyHeadTable headers={headers} rows={posts} />
+
+
+
+                <Button variant="contained" color="primary"  onClick={handleClick}>
+                    Click Me
+                </Button>
             </div>
         )
     }
