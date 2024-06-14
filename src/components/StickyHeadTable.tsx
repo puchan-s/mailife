@@ -94,7 +94,7 @@ const StickyHeadTable: React.FC<Props> = ({ headers ,rows }) => {
                         showFirstButton
                         showLastButton
                         color="primary"
-                        sx={{ ml: '10px', width: '750px' }}
+                        sx={{ ml: '10px', width: '100%' }}
                     />
                 )}
                 slotProps={{
@@ -143,7 +143,7 @@ const StickyHeadTable: React.FC<Props> = ({ headers ,rows }) => {
                                                 {value}
                                             </Cell>
                                          ))}
-                                        <Cell align="left">
+                                        <Cell component="th" scope="row"  align="left">
                                             <Button variant="contained" color="primary" onClick={handleClick}>
                                                 詳細
                                             </Button>
