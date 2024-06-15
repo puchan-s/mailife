@@ -38,10 +38,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}else if( req.body['actionType'] === 'lead'){
 		//読み込み処理
 		
+		const userId:string = req.body['userId'];
+		
 		// テスト用のクエリ
 		let query: string = '';
 		query += 'SELECT [name]	,[money], payDate,mptiming.payTimingName,mptype.payTypeName FROM [MAILIFEDB].[dbo].[TrsSpendingData]   As tsd'
-			   + ' LEFT JOIN MstPayTiming AS mptiming ON tsd.payTIming = mptiming.payTimingID LEFT JOIN MstPayType As mptype ON tsd.payType = mptype.payTypeID';
+			   + ' LEFT JOIN MstPayTiming AS mptiming ON tsd.payTIming = mptiming.payTimingID LEFT JOIN MstPayType As mptype ON tsd.payType = mptype.payTypeID'
+			   + ` WHERE userTableID = ${userId}`;
 
 
 		const result = await queryWithRetry(query);
