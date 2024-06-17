@@ -1,30 +1,35 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState,useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import RetryableAxios from '@/utils/RetryableAxios';
+import CustomButton from '../components/CustomButton'
 
 const SpendingList: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [money, setMoney] = useState<number | string>('');
   const [payTiming, setPayTiming] = useState<string>('');
   const [payType, setPayType] = useState<string>('');
+  const [dataType, setDataType] = useState<string>('');
+  const [userId,setUserId] = useState('');
+  const [userList,setUserList] = useState([]);
+  const [selectedDate, setSelectedDate] = useState<string>('');
   
   const selectRef = useRef<HTMLSelectElement>(null);
 
   const handleSubmit = () => {
-    if (selectRef.current) {
-      alert(`Selected Value: ${selectRef.current.value}`);
-    }
 
     const data = {
       'actionType':'create',
+      userId,
+      dataType,
       name,
       money,
       payTiming,
       payType,
+      selectedDate
     };
 
     const retryableAxios = new RetryableAxios(3); // 最大3回リトライする
@@ -42,8 +47,57 @@ const SpendingList: React.FC = () => {
     .catch(error => console.error('Error:', error));
   };
 
+  useEffect(() => {
+
+    const retryableAxios = new RetryableAxios(3); // 最大3回リトライする
+    retryableAxios.request({
+      url: '/api/userData',
+      method: 'POST',
+      data:{
+        'actionType':'lead'
+      }
+    })
+    .then(response => {
+      console.log('Success:', response.data);
+      if (response.data.message === "OK") {
+        // select取得時の処理
+        setUserList(response.data.result);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+    
+  }, []); 
+  
+
   return (
     <div>
+
+    <InputLabel id="payTiming-title">ユーザ</InputLabel>
+      <Select
+        id="userId"
+        label="ユーザ名"
+        value={userId}
+        onChange={(e) => setUserId(e.target.value as string)
+        }
+      >
+        {userList
+          .map((user,idx) => (
+            <MenuItem key={idx} value={user.id}>{user.nickname}</MenuItem>
+          ))
+        }
+      </Select>
+
+      <InputLabel id="payTiming-title">データ種別</InputLabel>
+      <Select
+        id="dataType"
+        label="データ種別"
+        value={dataType}
+        onChange={(e) => setDataType(e.target.value as string)}
+      >
+        <MenuItem value={'1'}>支出</MenuItem>
+        <MenuItem value={'2'}>収入</MenuItem>
+      </Select>
+
       <InputLabel id="Name-title">商品</InputLabel>
       <TextField
         id="name"
@@ -89,11 +143,26 @@ const SpendingList: React.FC = () => {
         <MenuItem value={'3'}>娯楽</MenuItem>
       </Select>
 
+
+      <InputLabel id="payType-title">日付</InputLabel>
+      <TextField
+      id="date"
+      label="日付"
+      type="date"
+      value={selectedDate}
+      onChange={(e) => setSelectedDate(e.target.value)}
+      InputLabelProps={{
+        shrink: true,
+      }}
+    />
+
       <br />
 
       <Button variant="contained" color="primary" onClick={handleSubmit}>
         登録
       </Button>
+
+      <CustomButton routePath='SpendingList' context='一覧へ戻る' />
     </div>
   );
 };

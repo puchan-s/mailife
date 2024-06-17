@@ -12,32 +12,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const payTiming:string = req.body['payTiming'];
 		const payType:string = req.body['payType'];
 		const parentId:string = '0';//req.body['parentId'];
-		const userTableId:string = req.body['userId'];
-		const dataType:string = req.body['dataType'];
-		const selectedDate:string = req.body['selectedDate'];
 		
 		// テスト用のクエリ
 		let query: string = '';
 		query += 'INSERT INTO [dbo].[TrsSpendingData] ';
-		query += '( '
-		query += '[userTableId] ';
-		query += ',[dataType] ';
-		query += ',[name] ';
+		query += '([name] ';
 		query += ',[money] ';
 		query += ',[payTiming] ';
 		query += ',[payType] ';
-		query += ',[payDate] ';
-		query += ',[parentId] ';
-		query += ') ';
+		query += ',[parentId]) ';
 		query += 'VALUES ';
 		query += '( ';
-		query += ` '${userTableId}'`;
-		query += `, '${dataType}'`;
-		query += `, '${name}'`;
+		query += ` '${name}'`;
 		query += `, '${money}'`;
 		query += `, '${payTiming}'`;
 		query += `, '${payType}'`;
-		query += `, '${selectedDate}'`;
 		query += `, '${parentId}'`;
 		query += ') ';
 
@@ -53,9 +42,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		
 		// テスト用のクエリ
 		let query: string = '';
-		query += 'SELECT [name]	,[money], payDate,mptiming.payTimingName,mptype.payTypeName FROM [MAILIFEDB].[dbo].[TrsSpendingData]   As tsd'
-			   + ' LEFT JOIN MstPayTiming AS mptiming ON tsd.payTIming = mptiming.payTimingID LEFT JOIN MstPayType As mptype ON tsd.payType = mptype.payTypeID'
-			   + ` WHERE userTableID = ${userId}`;
+		if( userId ){
+
+		}else{
+			query += 'SELECT * FROM trsUser';
+		}
 
 
 		const result = await queryWithRetry(query);
