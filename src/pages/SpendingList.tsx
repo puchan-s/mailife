@@ -71,6 +71,9 @@ class SpendingList extends React.Component<{},State> {
             },
             {
                 name: "支払い種類"
+            },
+            {
+                name: "決済種別"
             }
         ];
                 
@@ -110,7 +113,7 @@ class SpendingList extends React.Component<{},State> {
           url: '/api/totalMoney',
           method: 'POST',
           data:{
-            dataType:'2',
+            payDataType:'2',
             userId:this.state.userId
           }
         })
@@ -127,7 +130,7 @@ class SpendingList extends React.Component<{},State> {
             url: '/api/totalMoney',
             method: 'POST',
             data:{
-              dataType:'1',
+              payDataType:'1',
               userId:this.state.userId
             }
           })

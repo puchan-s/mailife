@@ -32,7 +32,7 @@ const StickyHeader = styled(TableCell)`
 `;
 
 const Cell = styled(TableCell)`
-  min-width: 400px;
+  min-width: 4px;
 `;
 
 const RoundedPaginationItem = styled(Pagination)`
@@ -58,7 +58,7 @@ type Props = {
 
 const StickyHeadTable: React.FC<Props> = ({ headers ,rows }) => {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(100);
 
     const handleChangePage = useCallback((event: unknown, newPage: number) => {
         setPage(newPage - 1)

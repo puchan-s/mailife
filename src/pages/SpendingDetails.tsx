@@ -12,7 +12,7 @@ const SpendingList: React.FC = () => {
   const [money, setMoney] = useState<number | string>('');
   const [payTiming, setPayTiming] = useState<string>('');
   const [payType, setPayType] = useState<string>('');
-  const [dataType, setDataType] = useState<string>('');
+  const [payDataType, setPayDataType] = useState<string>('');
   const [userId,setUserId] = useState('');
   const [userList,setUserList] = useState([]);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -24,7 +24,7 @@ const SpendingList: React.FC = () => {
     const data = {
       'actionType':'create',
       userId,
-      dataType,
+      payDataType,
       name,
       money,
       payTiming,
@@ -89,10 +89,10 @@ const SpendingList: React.FC = () => {
 
       <InputLabel id="payTiming-title">データ種別</InputLabel>
       <Select
-        id="dataType"
+        id="payDataType"
         label="データ種別"
-        value={dataType}
-        onChange={(e) => setDataType(e.target.value as string)}
+        value={payDataType}
+        onChange={(e) => setPayDataType(e.target.value as string)}
       >
         <MenuItem value={'1'}>支出</MenuItem>
         <MenuItem value={'2'}>収入</MenuItem>

@@ -5,7 +5,7 @@ import { queryWithRetry } from '../../utils/queryWithRetry';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const dataType:string = req.body['dataType'];
+    const payDataType:string = req.body['payDataType'];
     const userId:string = req.body['userId'];
 
 		//読み込み処理
@@ -14,9 +14,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		let query: string = '';
         if( userId === '' ){
             //ユーザ指定なし
-            query += `SELECT[money], payDate , payTiming FROM [MAILIFEDB].[dbo].[TrsSpendingData] WHERE dataType = ${dataType} ORDER BY payDate`;
+            query += `SELECT[money], payDate , payTiming FROM [MAILIFEDB].[dbo].[TrsSpendingData] WHERE payDataType = ${payDataType} ORDER BY payDate`;
         }else{
-            query += `SELECT[money], payDate , payTiming FROM [MAILIFEDB].[dbo].[TrsSpendingData] WHERE dataType = ${dataType} AND userTableID = ${userId} ORDER BY payDate`;
+            query += `SELECT[money], payDate , payTiming FROM [MAILIFEDB].[dbo].[TrsSpendingData] WHERE payDataType = ${payDataType} AND userTableID = ${userId} ORDER BY payDate`;
         }
 
 

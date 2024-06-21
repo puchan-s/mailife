@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const payType:string = req.body['payType'];
 		const parentId:string = '0';//req.body['parentId'];
 		const userTableId:string = req.body['userId'];
-		const dataType:string = req.body['dataType'];
+		const payDataType:string = req.body['payDataType'];
 		const selectedDate:string = req.body['selectedDate'];
 		
 		// テスト用のクエリ
@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		query += 'INSERT INTO [dbo].[TrsSpendingData] ';
 		query += '( '
 		query += '[userTableId] ';
-		query += ',[dataType] ';
+		query += ',[payDataType] ';
 		query += ',[name] ';
 		query += ',[money] ';
 		query += ',[payTiming] ';
@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		query += 'VALUES ';
 		query += '( ';
 		query += ` '${userTableId}'`;
-		query += `, '${dataType}'`;
+		query += `, '${payDataType}'`;
 		query += `, '${name}'`;
 		query += `, '${money}'`;
 		query += `, '${payTiming}'`;
@@ -53,10 +53,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		
 		// テスト用のクエリ
 		let query: string = '';
-		query += 'SELECT [name]	,[money], payDate,mptiming.payTimingName,mptype.payTypeName FROM [MAILIFEDB].[dbo].[TrsSpendingData]   As tsd'
-			   + ' LEFT JOIN MstPayTiming AS mptiming ON tsd.payTIming = mptiming.payTimingID LEFT JOIN MstPayType As mptype ON tsd.payType = mptype.payTypeID'
-			   + ` WHERE userTableID = ${userId}`;
-
+		query +=' SELECT';
+		query +=' name,';
+		query +=' money,';
+		query +=' payDate,';
+		query +=' mptiming.payTimingName,';
+		query +=' mptype.payTypeName,';
+		query +=' mpdType.payDateTypeName';
+		query +=' FROM';
+		query +=' TrsSpendingData As tsd';
+		query +=' LEFT JOIN MstPayTiming AS mptiming ON tsd.payTIming = mptiming.payTimingID';
+		query +=' LEFT JOIN MstPayType As mptype ON tsd.payType = mptype.payTypeID';
+		query +=' LEFT JOIN MstPayDataType As mpdType ON tsd.payType = mpdType.payDataTypeId';
+		query +=' WHERE';
+		query +=` userTableID = ${userId}`;
 
 		const result = await queryWithRetry(query);
 		res.status(200).json({ message: 'OK', result:result.recordset });	
