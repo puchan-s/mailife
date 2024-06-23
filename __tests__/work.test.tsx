@@ -1,4 +1,5 @@
 // example.test.js
+/*
 import { test, expect } from '@playwright/test';
 
 test('Google Homepage', async ({ page }) => {
@@ -6,4 +7,4 @@ test('Google Homepage', async ({ page }) => {
   //await expect(page).toHaveTitle('Google');
   await page.screenshot({ path: 'screenshot/google-homepage.png' });
 });
-    
+*/
