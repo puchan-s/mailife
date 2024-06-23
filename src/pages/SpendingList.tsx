@@ -3,6 +3,7 @@
 import React from 'react';
 import StickyHeadTable from '../components/StickyHeadTable'
 import CustomButton from '../components/CustomButton'
+import Layout from '../components/Layout'
 import RetryableAxios from '@/utils/RetryableAxios';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
@@ -192,7 +193,7 @@ class SpendingList extends React.Component<{},State> {
           };
 
         return (
-            <div>
+            <Layout>
                 <Box sx={{ width: 1800, height: 800, backgroundColor: 'lightblue' }}>
                     <p>支出一覧</p>
                     <Bar data={data} options={options} />
@@ -211,7 +212,7 @@ class SpendingList extends React.Component<{},State> {
 
                     <StickyHeadTable headers={this.headers} rows={listData} />
                 </Box>
-            </div>
+            </Layout>
         )
     }
 }

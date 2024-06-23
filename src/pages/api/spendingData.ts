@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		query +=' SELECT';
 		query +=' name,';
 		query +=' money,';
-		query +=' payDate,';
+		query +=' FORMAT(payDate,\'yyyy/MM/dd\') AS payDate,';
 		query +=' mptiming.payTimingName,';
 		query +=' mptype.payTypeName,';
 		query +=' mpdType.payDateTypeName';
