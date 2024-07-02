@@ -3,6 +3,9 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import styleCalender from "../styles/calender.module.scss"
 import FullCalendar, { DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/react';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import RetryableAxios from '@/utils/RetryableAxios';
 import {
 	Button,
@@ -205,7 +208,7 @@ const CustomCalender: React.FC = () => {
 
 		const updateEvent = {
 			actionType: 'update',
-			eventId:eventId,
+			eventId: eventId,
 			title: eventTitle,
 			start: selectedDate,
 			allDay: true
@@ -354,6 +357,18 @@ const CustomCalender: React.FC = () => {
 						InputLabelProps={{
 							shrink: true,
 						}} />
+
+					<InputLabel id="payType-title">予定種別</InputLabel>
+					<Select
+						id="payType"
+						label="予定種別"
+						//value={payType}
+						//onChange={}
+					>
+						<MenuItem value={'1'}>1日のみ</MenuItem>
+						<MenuItem value={'2'}>毎週</MenuItem>
+						<MenuItem value={'3'}>毎月</MenuItem>
+					</Select>
 
 				</DialogContent>
 				<DialogActions>
