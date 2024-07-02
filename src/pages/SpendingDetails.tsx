@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import RetryableAxios from '@/utils/RetryableAxios';
-import CustomButton from '../components/CustomButton'
+import CustomButton from '../components/CustomButton';
 
 const SpendingList: React.FC = () => {
   const [name, setName] = useState<string>('');

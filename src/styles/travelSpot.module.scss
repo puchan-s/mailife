@@ -1,0 +1,18 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .left, .right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* エレメント間の隙間 */
+  }
+  
+  .element {
+    padding: 10px;
+    background-color: lightgray;
+    border: 1px solid gray;
+    text-align: center;
+  }
+  
