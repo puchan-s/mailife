@@ -97,7 +97,7 @@ class SpendingList extends React.Component<{},State> {
           url: '/api/spendingData',
           method: 'POST',
           data:{
-            'actionType':'lead',
+            'actionType':'Read',
             userId:this.state.userId
           }
         })

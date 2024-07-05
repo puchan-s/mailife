@@ -1,133 +1,112 @@
-import React, { useState, useEffect, useRef } from 'react';
-
+import React, { Component, createRef } from 'react';
 import InputLabel from '@mui/material/InputLabel';
-import {
-  Button,
-  TextField
-} from '@mui/material';
+import { Button, TextField } from '@mui/material';
+import { Point } from '../utils/classes/point';
 
-const CustomMap: React.FC = () => {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const [placeName, setPlaceName] = useState<string>('');
+interface CustomMapProps {
+  onPoint: Point;
 
-  const center = {
-    lat: 37.406847477536914,
-    lng: 140.35072086510343
-  };
+ }
 
+interface CustomMapState {
+  placeName: string;
+  marker: google.maps.marker.AdvancedMarkerElement | null;
+  point: Point;
+}
 
-  useEffect(() => {
-    if (mapContainerRef.current) {
-      const map = new google.maps.Map(mapContainerRef.current, {
-        center: center,
+class CustomMap extends Component<CustomMapProps, CustomMapState> {
+  private mapContainerRef = createRef<HTMLDivElement>();
+  private mapInstance: google.maps.Map | null = null;
+
+  constructor(props: CustomMapProps) {
+    super(props);
+    this.state = {
+      placeName: '',
+      marker: null,
+      point: props.onPoint
+    };
+  }
+
+  componentDidMount() {
+    if (this.mapContainerRef.current) {
+      this.mapInstance = new google.maps.Map(this.mapContainerRef.current, {
+        center: { lat: 37.406847477536914, lng: 140.35072086510343 },
         zoom: 10,
         mapId: "AIzaSyCgPnyehv6XCUQeq78zkwXf7k62UMRg_tc"
+
       });
 
-      new google.maps.marker.AdvancedMarkerElement({
-        position: center,
-        map,
-        title: "Hello World!",
+      this.mapInstance.addListener('click', (event: google.maps.MapMouseEvent) => {
+        if (event.latLng) {
+          if (this.state.marker !== null) {
+            this.state.marker.setMap(null);
+          }
+
+          const latLng = event.latLng;
+          const newMarker = new google.maps.marker.AdvancedMarkerElement({
+            position: latLng,
+            map: this.mapInstance,
+          });
+
+          this.state.point.setPoint(newMarker.position.Fg,newMarker.position.Gg);
+          this.setState({ marker: newMarker });
+        }
       });
     }
-  }, []);
+  }
 
-  /**
-   * 検索ボタン押下
-   */
-  const mapSearch = () => {
+  mapSearch = () => {
+    if (!this.mapInstance) return;
 
-    var geocoder = new google.maps.Geocoder();      // geocoderのコンストラクタ
+    const geocoder = new google.maps.Geocoder();
 
-    geocoder.geocode({
-      address: placeName
-    }, function (results, status) {
+    geocoder.geocode({ address: this.state.placeName }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK && results[0]) {
+        const latLng = results[0].geometry.location;
+        this.mapInstance.setCenter(latLng);
+        this.mapInstance.setZoom(15);
 
-      console.log(status);
-      if (status == google.maps.GeocoderStatus.OK) {
-
-        var bounds = new google.maps.LatLngBounds();
-
-        for (var i in results) {
-          if (results[0].geometry) {
-            // 緯度経度を取得
-            var latlng = results[0].geometry.location;
-            // 住所を取得
-            var address = results[0].formatted_address;
-            // 検索結果地が含まれるように範囲を拡大
-            bounds.extend(latlng);
-            // マーカーのセット
-            setMarker(latlng);
-            // マーカーへの吹き出しの追加
-            setInfoW(place, latlng, address);
-            // マーカーにクリックイベントを追加
-            markerEvent();
-          }
+        if (this.state.marker !== null) {
+          this.state.marker.setMap(null);
         }
-      } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
-        alert("見つかりません");
+
+        const newMarker = new google.maps.marker.AdvancedMarkerElement({
+          position: latLng,
+          map: this.mapInstance,
+          title: this.state.placeName,
+        });
+
+        this.setState({ marker: newMarker });
       } else {
-        console.log(status);
+        console.error('Geocode was not successful for the following reason:', status);
         alert("エラー発生");
       }
     });
-
-
   };
 
-  // マーカーのセットを実施する
-  function setMarker(setplace) {
-    // 既にあるマーカーを削除
-    deleteMakers();
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ placeName: event.target.value });
+  };
 
-    var iconUrl = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
-    marker = new google.maps.Marker({
-      position: setplace,
-      map: map,
-      icon: iconUrl
-    });
+  render() {
+    return (
+      <div style={{ width: '100%', height: '100%' }}>
+        <InputLabel id="Name-title">場所名</InputLabel>
+        <TextField
+          id="name"
+          label="場所名"
+          type="search"
+          variant="filled"
+          value={this.state.placeName}
+          onChange={this.handleInputChange}
+        />
+        <Button variant="contained" color="primary" onClick={this.mapSearch}>
+          検索
+        </Button>
+        <div ref={this.mapContainerRef} style={{ width: '100%', height: '100%' }} />
+      </div>
+    );
   }
-
-  //マーカーを削除する
-  function deleteMakers() {
-    if (marker != null) {
-      marker.setMap(null);
-    }
-    marker = null;
-  }
-
-  // マーカーへの吹き出しの追加
-  function setInfoW(place, latlng, address) {
-    infoWindow = new google.maps.InfoWindow({
-      content: "<a href='http://www.google.com/search?q=" + place + "' target='_blank'>" + place + "</a><br><br>" + latlng + "<br><br>" + address + "<br><br><a href='http://www.google.com/search?q=" + place + "&tbm=isch' target='_blank'>画像検索 by google</a>"
-    });
-  }
-
-
-  // クリックイベント
-  function markerEvent() {
-    marker.addListener('click', function () {
-      infoWindow.open(map, marker);
-    });
-  }
-
-  return (
-    <div style={{ width: '100%', height: '100%' }} >
-      <InputLabel id="Name-title">場所名</InputLabel>
-      <TextField
-        id="name"
-        label="場所名"
-        type="search"
-        variant="filled"
-        value={placeName}
-        onChange={(e) => setPlaceName(e.target.value)}
-      />
-      <Button variant="contained" color="primary" onClick={mapSearch}>
-        検索
-      </Button>
-      <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
-    </div>
-  );
-};
+}
 
 export default CustomMap;

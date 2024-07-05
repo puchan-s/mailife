@@ -54,7 +54,7 @@ const SpendingList: React.FC = () => {
       url: '/api/userData',
       method: 'POST',
       data:{
-        'actionType':'lead'
+        'actionType':'Read'
       }
     })
     .then(response => {

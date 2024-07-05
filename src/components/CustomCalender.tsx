@@ -35,7 +35,7 @@ const CustomCalender: React.FC = () => {
 			retryableAxios.request({
 				url: '/api/calenderEvent',
 				method: 'POST',
-				data: { actionType: 'load' }
+				data: { actionType: 'Read' }
 			})
 				.then(response => {
 					const newEvents = [];
@@ -113,7 +113,7 @@ const CustomCalender: React.FC = () => {
 		retryableAxios.request({
 			url: '/api/calenderEvent',
 			method: 'POST',
-			data: { actionType: 'load' }
+			data: { actionType: 'Read' }
 		})
 			.then(response => {
 				if (response.data.message === "OK") {
@@ -169,7 +169,7 @@ const CustomCalender: React.FC = () => {
 		retryableAxios.request({
 			url: '/api/calenderEvent',
 			method: 'POST',
-			data: { actionType: 'load' }
+			data: { actionType: 'Read' }
 		})
 			.then(response => {
 				if (response.data.message === "OK") {
@@ -232,7 +232,7 @@ const CustomCalender: React.FC = () => {
 		retryableAxios.request({
 			url: '/api/calenderEvent',
 			method: 'POST',
-			data: { actionType: 'load' }
+			data: { actionType: 'Read' }
 		})
 			.then(response => {
 				if (response.data.message === "OK") {
@@ -299,7 +299,7 @@ const CustomCalender: React.FC = () => {
 		retryableAxios.request({
 			url: '/api/calenderEvent',
 			method: 'POST',
-			data: { actionType: 'load', eventId: clickInfo.event.id }
+			data: { actionType: 'Read', eventId: clickInfo.event.id }
 		})
 			.then(response => {
 				if (response.data.message === "OK") {
