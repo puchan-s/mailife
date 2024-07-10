@@ -49,25 +49,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else if (req.body['actionType'] === 'Read') {
         // //読み込み処理
 
-        // // クエリ
-        // let query: string = '';
+        // クエリ
+        let query: string = '';
 
-        // //ユーザ指定なし
-        // query += 'SELECT TOP (1000) [eventId]';
-        // query += ',[title]';
-        // query += ',[allDay]';
-        // query += ',[note]';
-        // query += ',FORMAT([start],\'yyyy-MM-ddTHH:mm:ss\') AS start';
-        // query += ',[end]';
-        // query += 'FROM [MAILIFEDB].[dbo].[TrsCalednerEvent]';
+        //ユーザ指定なし
+        query += ' SELECT [travelSpotID]';
+        query += ' ,[latitude]';
+        query += ' ,[longitude]';
+        query += ' ,[spotName]';
+        query += ' ,[spotType]';
+        query += ' ,[note]';
+        query += ' FROM [MAILIFEDB].[dbo].[TrsTravelSpot]';
 
-        // if (req.body['eventId']) {
-        //     query += ` WHERE [eventId] = ${req.body['eventId']}`;
-        // }
+        const result = await queryWithRetry(query);
 
-        // const result = await queryWithRetry(query);
-
-        // res.status(200).json({ message: 'OK', result: result.recordset });
+        res.status(200).json({ message: 'OK', result: result.recordset });
     } else if (req.body['actionType'] === 'delete') {
         // //読み込み処理
 
