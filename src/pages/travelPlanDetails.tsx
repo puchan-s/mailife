@@ -61,7 +61,7 @@ const travelSpot: React.FC = () => {
             </div>
             <div className={styles.right}>
                 <div className={styles.element}  >
-                    <CustomList />
+                    <CustomList data={[{name:'ネーム'},{name:'ネーム2'}]} />
                 </div>
             </div>
         </div>
