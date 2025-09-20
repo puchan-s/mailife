@@ -25,6 +25,10 @@ export class listData {
     getMasterData() {
         return this.masterData;
     }
+
+    setMasterData(masterData:object){
+        return this.masterData = masterData;
+    }
 }
 
 interface DraggableItemProps {

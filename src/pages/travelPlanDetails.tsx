@@ -4,6 +4,7 @@ import styles from '../styles/travelSpot.module.scss'; // 後述のCSSモジュ�
 import RetryableAxios from '@/utils/RetryableAxios';
 
 import { CustomList, listData, CustomListHandle } from '../components/CustomList';
+import CustomButton from '../components/CustomButton';
 
 import {
     Button,
@@ -25,12 +26,14 @@ const travelSpot: React.FC = () => {
     const [selectAddNum, setSelectAddNum] = useState<number>(0);
     const [spotDataList, setSpotDataList] = useState<object[]>([]);
     const [selectSpotId, setSelectSpotId] = useState<string>('');
+    const [planId,setPlanId] = useState<string>('2');
 
 
     useEffect(() => {
 
         const spotParam = {
-            actionType: 'Read'
+            actionType: 'Read',
+            PlanId: planId
         };
 
         //取得
@@ -68,11 +71,10 @@ const travelSpot: React.FC = () => {
 
     }, []);
 
+
     function spotDelete(event: React.MouseEvent<HTMLButtonElement>) {
 
         const values: string[] = event.currentTarget.value.split(',');
-
-        console.log(values);
         const workItems: (listData[] | undefined) = spotListRefArray.current[Number(values[0])]?.getData();
 
         if (workItems) {
@@ -82,18 +84,83 @@ const travelSpot: React.FC = () => {
 
     function spotViewFunc(data: listData) {
         return (
-            <div>
-                <p>場所：{data.getMasterData().spotName}</p>
-                <p>備考</p>
-                <p>{data.getMasterData().note}</p>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={spotDelete}
-                    value={data.getMasterData().dayNum + ',' + data.getId()}
-                >
-                    X
-                </Button>
+            <div style={{ display: 'flex' }}>
+                <text>
+                    <TextField
+                        id={data.getMasterData().PlanSpotId + '_StartTime_hour'}
+                        inputProps={{
+                            style: { width: '2ch' , height: '0ch' ,backgroundColor: 'white'}
+                        }}
+                        variant="outlined"
+                        defaultValue={new Date(data.getMasterData().StartTime).getUTCHours().toString().padStart(2, '0')}
+                    />
+                    <text>:</text>
+                    <TextField
+                        id={data.getMasterData().PlanSpotId + '_StartTime_minutes'}
+                        inputProps={{
+                            style: { width: '2ch' , height: '0ch',backgroundColor: 'white'}
+                        }}
+                        variant="outlined"
+                        defaultValue={new Date(data.getMasterData().StartTime).getUTCMinutes().toString().padStart(2, '0')}
+                    />
+                    ～
+                    <TextField
+                        id={data.getMasterData().PlanSpotId + '_EndTime_hour'}
+                        inputProps={{
+                            style: { width: '2ch' , height: '0ch',backgroundColor: 'white'}
+                        }}
+                        variant="outlined"
+                        defaultValue={new Date(data.getMasterData().EndTime).getUTCHours().toString().padStart(2, '0')}
+                    />
+                    <text>:</text>
+                    <TextField
+                        id={data.getMasterData().PlanSpotId + '_EndTime_minutes'}
+                        inputProps={{
+                            style: { width: '2ch' , height: '0ch',backgroundColor: 'white'}
+                        }}
+                        variant="outlined"
+                        defaultValue={new Date(data.getMasterData().EndTime).getUTCMinutes().toString().padStart(2, '0')}
+                    />
+                </text>
+                <div style={{ textAlign: 'left', paddingLeft: '20px', paddingRight: '20px', }}>
+                    <p>場所：{data.getMasterData().spotName}</p>
+                    <p>備考:</p>
+                    <text>{data.getMasterData().note}</text>
+                </div>
+                <text>費用</text>
+                <TextField
+                        id={data.getMasterData().PlanSpotId + '_PlanMoney'}
+                        inputProps={{
+                            style: { width: '6ch' , height: '0ch',backgroundColor: 'white' ,textAlign: 'Right'}
+                        }}
+                        variant="outlined"
+                        defaultValue={data.getMasterData().PlanMoney}
+                    />
+                    <text>円</text>
+                <div>
+                    <TextField
+                        id={data.getMasterData().PlanSpotId + '_Plan'}
+                        label="備考"
+                        multiline
+                        rows={4}
+                        variant="outlined"
+                        fullWidth
+                        inputProps={{
+                            style: {backgroundColor: 'white'}
+                        }}
+                        defaultValue={data.getMasterData().PlanNote}
+                    />
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={spotDelete}
+                        value={data.getMasterData().dayNum + ',' + data.getId()}
+                    >
+                        X
+                    </Button>
+                </div>
             </div>
         );
     }
@@ -127,13 +194,22 @@ const travelSpot: React.FC = () => {
 
     function addSpotData() {
 
+        //末尾に追加するので最大値+1の値を取得する
         const maxId: (number | undefined) = spotListRefArray.current[selectAddNum]?.getItemMaxId();
+        //追加する日にちのデータを取得する
         const workItems: (listData[] | undefined) = spotListRefArray.current[selectAddNum]?.getData();
+        //スポット情報を取得する
         const selectSpotData = spotDataList.filter((value) => value.travelSpotID === selectSpotId);
+        const planDate = document.getElementById(selectAddNum + '_PlanDate').innerText;
 
 
         if (maxId && workItems) {
-            selectSpotData[0]['dayNum'] = selectAddNum;
+            //日付番号を設定
+            selectSpotData[0]['dayNum'] = selectAddNum; 
+            selectSpotData[0]['PlanDate'] = planDate; 
+            selectSpotData[0]['PlanId'] = planId;   
+            selectSpotData[0]['SpotId'] = selectSpotData[0].travelSpotID; 
+
             const addData: listData = new listData(maxId, spotViewFunc, selectSpotData[0]);
             workItems.push(addData);
             spotListRefArray.current[selectAddNum]?.setData(workItems);
@@ -171,14 +247,29 @@ const travelSpot: React.FC = () => {
         let values: object[] = [];
         spotListRefArray.current.map((value: (CustomListHandle | null)) => {
             value?.getData().map((data: listData, idx: number) => {
+
+                const startTime = 
+                    document.getElementById(data.getMasterData().PlanSpotId + '_StartTime_hour').value +
+                     ':' + document.getElementById(data.getMasterData().PlanSpotId + '_StartTime_minutes').value  ;
+                const endTime = 
+                    document.getElementById(data.getMasterData().PlanSpotId + '_EndTime_hour').value +
+                    ':' + document.getElementById(data.getMasterData().PlanSpotId + '_EndTime_minutes').value  ;
+                const money = document.getElementById(data.getMasterData().PlanSpotId + '_PlanMoney').value;
+                const planNote = document.getElementById(data.getMasterData().PlanSpotId + '_Plan').value;
+
                 values.push({
                     PlanId: data.getMasterData().PlanId
                     , SpotId: data.getMasterData().SpotId
                     , PlanDate: data.getMasterData().PlanDate
+                    , StartTime: startTime
+                    , EndTime: endTime
+                    , money: money
                     , SeqNo: idx
+                    , planNote: planNote
                 });
             });
         });
+
 
         const spotDeleteParam = {
             actionType: 'delete',
@@ -197,11 +288,11 @@ const travelSpot: React.FC = () => {
             method: 'POST',
             data: spotDeleteParam
         })
-        .then(response => {
-            if (response.data.message === "OK") {
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (response.data.message === "OK") {
+                }
+            })
+            .catch(error => console.error('Error:', error));
 
         //登録
         retryableAxios.request({
@@ -209,11 +300,11 @@ const travelSpot: React.FC = () => {
             method: 'POST',
             data: spotCreateParam
         })
-        .then(response => {
-            if (response.data.message === "OK") {
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (response.data.message === "OK") {
+                }
+            })
+            .catch(error => console.error('Error:', error));
 
     }
 
@@ -221,6 +312,7 @@ const travelSpot: React.FC = () => {
         <div className={styles.container}>
             <div className={styles.left}>
                 <div className={styles.element}>
+                    {/* 全体の移動マップボタン */}
                     <Button
                         variant="contained"
                         color="primary"
@@ -229,6 +321,7 @@ const travelSpot: React.FC = () => {
                     >
                         全体の移動マップ
                     </Button>
+                    {/* 設定保存ボタン */}
                     <Button
                         variant="contained"
                         color="primary"
@@ -236,12 +329,14 @@ const travelSpot: React.FC = () => {
                     >
                         保存
                     </Button>
+                    {/* スポット追加ボタン */}
+                    <CustomButton routePath='travelSpot' context='スポット追加' />
                 </div>
             </div>
             <div className={styles.right}>
                 {Object.keys(initListData).map((value, idx) => (
                     <div className={styles.element} key={idx} >
-                        <span>{value}</span>
+                        <span id={idx + '_PlanDate'} >{value}</span>
                         {/*マップ表示ボタン（日別）*/}
                         <Button
                             variant="contained"
@@ -260,6 +355,7 @@ const travelSpot: React.FC = () => {
                         >
                             追加
                         </Button>
+                        {/* 1日のスポットリスト */}
                         <CustomList ref={el => (spotListRefArray.current[idx] = el)} data={initListData[value]} />
                     </div>
                 ))}

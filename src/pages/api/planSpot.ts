@@ -14,7 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         query += ' ([PlanId]';
         query += ' ,[SpotId]';
         query += ' ,[PlanDate]';
-        query += '  ,[SeqNo])';
+        query += '  ,[SeqNo]';
+        query += '  ,[StartTime]';
+        query += '  ,[EndTime]';
+        query += '  ,[Money]';
+        query += '  ,[note])';
         query += ' VALUES';
 
         req.body['values'].map((value) => {
@@ -23,6 +27,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             query += ` ,\'${value.SpotId}\'`;
             query += ` ,\'${value.PlanDate}\'`;
             query += ` ,\'${value.SeqNo}\'`;
+            query += ` ,\'${value.StartTime}\'`;
+            query += ` ,\'${value.EndTime}\'`;
+            query += ` ,\'${value.money}\'`;
+            query += ` ,\'${value.planNote}\'`;
             query += ' ),';
         });
 
@@ -56,17 +64,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
         query += ' SELECT ';
+        query += ' TTPS.PlanSpotId,'
         query += ' TTPS.PlanId,'
         query += ' TTPS.SpotId,'
         query += ' TTS.spotName,';
         query += ' TTS.latitude,';
         query += ' TTS.longitude,';
         query += ' FORMAT(TTPS.PlanDate,\'yyyy-MM-dd\') AS PlanDate, ';
-        query += ' TTS.note';
+        query += ' TTS.note,';
+        query += ' TTPS.StartTime,';
+        query += ' TTPS.EndTime,';
+        query += ' TTPS.note AS PlanNote,';
+        query += ' TTPS.Money AS PlanMoney'
         query += ' FROM ';
         query += ' TrsTravelPlan AS TTP';
         query += ' LEFT JOIN TrsTravelPlanSpot AS TTPS ON TTP.PlanId = TTPS.PlanId';
         query += ' LEFT JOIN TrsTravelSpot AS TTS ON TTPS.SpotId = TTS.travelSpotID';
+        query += ` WHERE TTPS.PlanId = ${req.body['PlanId']}`;
         query += ' ORDER BY TTPS.PlanDate,TTPS.SeqNo';
 
         // if (req.body['eventId']) {
